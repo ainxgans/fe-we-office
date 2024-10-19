@@ -6,18 +6,28 @@ import * as axios from "axios";
 
 export default function BrowseCityWrapper() {
     const [cities, setCities] = useState(<City[]>([]);
-    const [loadin, setLoadin] = useState(true)
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState(<string | null>(null))
-    axios.get(`${import.meta.env.API_URL}/cities`, {
-        headers: {
-            "X-API-KEY": import.meta.env.API_KEY
+    useEffect(() => {
+        axios.get("http://127.0.0.1:8000/api/cities",{
+            headers:{
+                "X-API-KEY":"$2y$10$1J6Q6Z",
+            },
+        })
+            .then((response) => {
+                setCities(response.data.data)
+                setLoading(false)
+            })
+            .catch((error) => {
+                setError(error.message)
+                setLoading(false)
+    }, []);
+        if (loading) {
+            return <p>Loading...</p>
         }
-    }).then(response => {
-        setCities(response.data);
-        setLoading(false);
-    }).catch(err => {
-        setError(err.message);
-        setLoading(false);
+        if (error) {
+            return <p>{error}</p>
+        }
     });
     return (
         <section id="Cities" className="flex flex-col gap-[30px] mt-[100px]">
