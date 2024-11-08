@@ -4,6 +4,7 @@ import CityCard from "../components/CityCard.tsx";
 import {useEffect, useState} from "react";
 import * as axios from "axios";
 
+
 export default function BrowseCityWrapper() {
     const [cities, setCities] = useState(<City[]>([]);
     const [loading, setLoading] = useState(true)
@@ -11,10 +12,11 @@ export default function BrowseCityWrapper() {
     useEffect(() => {
         axios.get("http://127.0.0.1:8000/api/cities",{
             headers:{
-                "X-API-KEY":"$2y$10$1J6Q6Z",
+                "X-API-KEY":"dtfyguhijosedrtfgyhuj",
             },
         })
             .then((response) => {
+                console.log(response.data.data)
                 setCities(response.data.data)
                 setLoading(false)
             })
@@ -48,10 +50,14 @@ export default function BrowseCityWrapper() {
                     <Swiper direction={"horizontal"} spaceBetween={30} slidesPerView={"auto"}
                             slidesOffsetBefore={30}
                             slidesOffsetAfter={30}>
-                        <SwiperSlide
+                        {cities.map((city)=> (
+
+                        <SwiperSlide key={city.id}
                             className="!w-fit first-of-type:pl-[calc((100%-1130px-60px)/2)] last-of-type:pr-[calc((100%-1130px-60px)/2)]">
-                            <CityCard/>
+                            <CityCard city={city}></CityCard>
                         </SwiperSlide>
+
+                        ))}
                     </Swiper>
                 </div>
             </div>
