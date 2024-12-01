@@ -6,7 +6,8 @@ export interface Office {
     slug: string,
     city: City,
     thumbnail: string,
-    photo: Photo[],
+    address: string,
+    photos: Photo[],
     benefits: Benefit[],
     about: string,
 }
@@ -23,8 +24,8 @@ export interface City {
     name: string;
     slug: string;
     photo: string;
-    officeSpace_count: number;
-    officeSpace: Office[];
+    officeSpaces_count: number;
+    officeSpaces: Office[];
 }
 export interface BookingDetails {
     id: number;

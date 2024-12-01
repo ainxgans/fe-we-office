@@ -1,6 +1,38 @@
 import OfficeCard from "../components/OfficeCard.tsx";
+import {useEffect, useState} from "react";
+import {Office} from "../types/type.ts";
+import axios from "axios";
+import {Link} from "react-router-dom";
 
 function BrowseOfficeWrapper() {
+    const [offices, setOffices] = useState<Office[]>([]);
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => {
+        axios
+            .get("http://127.0.0.1:8000/api/offices", {
+                headers: {
+                    "X-API-KEY": "aslaksjlakshaksbnjaijwsa",
+                },
+            })
+            .then((response) => {
+                setOffices(response.data.data)
+                setLoading(false)
+            })
+            .catch((error) => {
+                setError(error.message)
+                setLoading(false)
+
+            })
+    }, []);
+    if (loading) {
+        return <p>Loading...</p>
+    }
+    if (error) {
+        return <p>Error loading data : {error}</p>
+    }
+
     return (
         <section
             id="Fresh-Space"
@@ -12,7 +44,11 @@ function BrowseOfficeWrapper() {
                 For Your Better Productivity.
             </h2>
             <div className="grid grid-cols-3 gap-[30px]">
-                <OfficeCard/>
+                {offices.map((office) => (
+                    <Link to={`/office/${office.slug}`} key={office.id}>
+                        <OfficeCard key={office.id} office={office}/>
+                    </Link>
+                ))}
             </div>
         </section>
     );

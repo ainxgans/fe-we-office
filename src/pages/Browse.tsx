@@ -1,45 +1,11 @@
-import {Swiper, SwiperSlide} from "swiper/react";
-import CityCard from "../components/CityCard.tsx";
 import BrowseOfficeWrapper from "../wrappers/BrowseOfficeWrapper.tsx";
+import BrowseCityWrapper from "../wrappers/BrowseCityWrapper.tsx";
+import {Navbar} from "../components/Navbar.tsx";
 
 export default function Browse() {
     return (
         <>
-            <nav className="bg-white">
-                <div className="flex items-center justify-between w-full max-w-[1130px] py-[22px] mx-auto">
-                    <a href="index.html">
-                        <img src="/assets/images/logos/logo.svg" alt="logo"/>
-                    </a>
-                    <ul className="flex items-center gap-[50px] w-fit">
-                        <li>
-                            <a href="">Browse</a>
-                        </li>
-                        <li>
-                            <a href="">Popular</a>
-                        </li>
-                        <li>
-                            <a href="">Categories</a>
-                        </li>
-                        <li>
-                            <a href="">Events</a>
-                        </li>
-                        <li>
-                            <a href="">My Booking</a>
-                        </li>
-                    </ul>
-                    <a
-                        href="#"
-                        className="flex items-center gap-[10px] rounded-full border border-[#000929] py-3 px-5"
-                    >
-                        <img
-                            src="/assets/images/icons/call.svg"
-                            className="w-6 h-6"
-                            alt="icon"
-                        />
-                        <span className="font-semibold">Contact Us</span>
-                    </a>
-                </div>
-            </nav>
+            <Navbar/>
             <header className="flex flex-col w-full">
                 <section id="Hero-Banner" className="relative flex h-[720px] -mb-[93px]">
                     <div
@@ -144,32 +110,7 @@ export default function Browse() {
                     </div>
                 </div>
             </header>
-            <section id="Cities" className="flex flex-col gap-[30px] mt-[100px]">
-                <div className="w-full max-w-[1130px] mx-auto flex items-center justify-between">
-                    <h2 className="font-bold text-[32px] leading-[48px] text-nowrap">
-                        You Can Choose <br/>
-                        Our Favorite Cities
-                    </h2>
-                    <a
-                        href="#"
-                        className="rounded-full rounded-full py-3 px-5 bg-white font-bold"
-                    >
-                        Explore All City
-                    </a>
-                </div>
-                <div className="swiper w-full">
-                    <div className="swiper-wrapper">
-                        <Swiper direction={"horizontal"} spaceBetween={30} slidesPerView={"auto"}
-                                slidesOffsetBefore={30}
-                                slidesOffsetAfter={30}>
-                            <SwiperSlide
-                                className="!w-fit first-of-type:pl-[calc((100%-1130px-60px)/2)] last-of-type:pr-[calc((100%-1130px-60px)/2)]">
-                                <CityCard/>
-                            </SwiperSlide>
-                        </Swiper>
-                    </div>
-                </div>
-            </section>
+            <BrowseCityWrapper/>
             <section
                 id="Benefits"
                 className="flex items-center justify-center w-[1015px] mx-auto gap-[100px] mt-[100px]"
@@ -285,6 +226,6 @@ export default function Browse() {
             </section>
             <BrowseOfficeWrapper>
             </BrowseOfficeWrapper>
-</>
+        </>
     );
 }
