@@ -3,7 +3,7 @@ import {Swiper, SwiperSlide} from "swiper/react";
 import {useEffect, useState} from "react";
 import {Office} from "../types/type.ts";
 import {Link, useParams} from "react-router-dom";
-import axios from "axios";
+import apiClient from "../services/apiService.ts";
 
 export default function Details() {
     const baseURL = "http://127.0.0.1:8000/storage/";
@@ -12,12 +12,8 @@ export default function Details() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null);
     useEffect(() => {
-        axios
-            .get(`http://127.0.0.1:8000/api/office/${slug}`, {
-                headers: {
-                    "X-API-KEY": "aslaksjlakshaksbnjaijwsa",
-                },
-            })
+        apiClient
+            .get(`/office/${slug}`)
             .then((response) => {
                 setOffice(response.data.data);
                 setLoading(false);

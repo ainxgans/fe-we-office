@@ -224,8 +224,7 @@ export default function Browse() {
                     </div>
                 </div>
             </section>
-            <BrowseOfficeWrapper>
-            </BrowseOfficeWrapper>
+            <BrowseOfficeWrapper/>
         </>
     );
 }

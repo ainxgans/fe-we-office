@@ -2,8 +2,8 @@ import {Navbar} from "../components/Navbar.tsx";
 import React, {useState} from "react";
 import {z} from "zod";
 import {BookingDetails} from "../types/type.ts";
-import {bookingSchema, viewBookingSchema} from "../types/validationBooking.ts";
-import axios from "axios";
+import {viewBookingSchema} from "../types/validationBooking.ts";
+import apiClient, {isAxiosError} from "../services/apiService.ts";
 
 export default function CheckBooking() {
     const [formData, setFormData] = useState({
@@ -14,7 +14,7 @@ export default function CheckBooking() {
     const [isLoading, setIsLoading] = useState(false);
     const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const baseUrl = "http://127.0.0.1:8000/storage/";
+    const baseURL = "http://127.0.0.1:8000/storage/";
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -37,20 +37,15 @@ export default function CheckBooking() {
         setIsLoading(true);
 
         try {
-            const response = await axios.post("http://127.0.0.1:8000/api/check-booking",
+            const response = await apiClient.post("/check-booking",
                 {
                     ...formData
-                },
-                {
-                    headers: {
-                        "X-API-KEY": "aslaksjlakshaksbnjaijwsa",
-                    },
                 }
             );
             console.log("Checking your booking", response.data.data);
             setBookingDetails(response.data.data)
         } catch (error: unknown) {
-            if (axios.isAxiosError(error)) {
+            if (isAxiosError(error)) {
                 console.error("Failed to create booking transaction", error.message);
                 setError(error.message);
             } else {
@@ -86,7 +81,7 @@ export default function CheckBooking() {
                 className="relative flex flex-col w-[930px] shrink-0 gap-[30px] mx-auto mb-[100px] z-20"
             >
                 <form
-                    action=""
+                    onSubmit={handleSubmit}
                     className="flex items-end rounded-[20px] border border-[#E0DEF7] p-[30px] gap-[16px] bg-white"
                 >
                     <div className="flex flex-col w-full gap-2">
@@ -110,6 +105,9 @@ export default function CheckBooking() {
                                 placeholder="Write your booking trx id"
                             />
                         </div>
+                        {formErrors.map((error) => error.path.includes("booking_trx_id") && (
+                            <p className="text-red-500">{error.message}</p>
+                        ))}
                     </div>
                     <div className="flex flex-col w-full gap-2">
                         <label className="font-semibold">
@@ -132,6 +130,9 @@ export default function CheckBooking() {
                                 placeholder="Write your valid number"
                             />
                         </div>
+                        {formErrors.map((error) => error.path.includes("phone_number") && (
+                            <p className="text-red-500">{error.message}</p>
+                        ))}
                     </div>
                     <button
                         disabled={isLoading}
@@ -148,14 +149,14 @@ export default function CheckBooking() {
                             <div className="flex items-center gap-4">
                                 <div className="flex shrink-0 w-[140px] h-[100px] rounded-[20px] overflow-hidden">
                                     <img
-                                        src="/assets/images/thumbnails/thumbnail-details-4.png"
+                                        src={`${baseURL}/${bookingDetails.office.thumbnail}`}
                                         className="w-full h-full object-cover"
                                         alt="thumbnail"
                                     />
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <p className="font-bold text-xl leading-[30px]">
-                                        Angga Park Central <br/> Master Capitalize
+                                        {bookingDetails.office.name}
                                     </p>
                                     <div className="flex items-center gap-[6px]">
                                         <img
@@ -163,7 +164,7 @@ export default function CheckBooking() {
                                             className="w-6 h-6"
                                             alt="icon"
                                         />
-                                        <p className="font-semibold">Jakarta Pusat</p>
+                                        <p className="font-semibold">{bookingDetails.office.city.name}</p>
                                     </div>
                                 </div>
                             </div>
@@ -178,11 +179,11 @@ export default function CheckBooking() {
                                             className="w-6 h-6"
                                             alt="icon"
                                         />
-                                        <p className="font-semibold">Angga Risky Setiawan</p>
+                                        <p className="font-semibold">{bookingDetails.name}</p>
                                     </div>
                                 </div>
                                 <div className="flex flex-col gap-2">
-                                    <h3 htmlFor="phone" className="font-semibold">
+                                    <h3 className="font-semibold">
                                         Phone Number
                                     </h3>
                                     <div className="flex items-center rounded-full px-5 py-3 gap-[10px] bg-[#F7F7FD]">
@@ -191,11 +192,11 @@ export default function CheckBooking() {
                                             className="w-6 h-6"
                                             alt="icon"
                                         />
-                                        <p className="font-semibold">6289123981239</p>
+                                        <p className="font-semibold">{bookingDetails.phone_number}</p>
                                     </div>
                                 </div>
                                 <div className="flex flex-col gap-2">
-                                    <h3 htmlFor="date" className="font-semibold">
+                                    <h3 className="font-semibold">
                                         Started At
                                     </h3>
                                     <div className="flex items-center rounded-full px-5 py-3 gap-[10px] bg-[#F7F7FD]">
@@ -204,11 +205,11 @@ export default function CheckBooking() {
                                             className="w-6 h-6"
                                             alt="icon"
                                         />
-                                        <p className="font-semibold">12 July 2024</p>
+                                        <p className="font-semibold">{bookingDetails.started_at}</p>
                                     </div>
                                 </div>
                                 <div className="flex flex-col gap-2">
-                                    <h3 htmlFor="date" className="font-semibold">
+                                    <h3 className="font-semibold">
                                         Ended At
                                     </h3>
                                     <div className="flex items-center rounded-full px-5 py-3 gap-[10px] bg-[#F7F7FD]">
@@ -217,7 +218,7 @@ export default function CheckBooking() {
                                             className="w-6 h-6"
                                             alt="icon"
                                         />
-                                        <p className="font-semibold">20 July 2024</p>
+                                        <p className="font-semibold">{bookingDetails.ended_at}</p>
                                     </div>
                                 </div>
                             </div>
@@ -237,30 +238,32 @@ export default function CheckBooking() {
                             className="flex flex-col h-fit shrink-0 rounded-[20px] border border-[#E0DEF7] p-[30px] gap-[30px] bg-white">
                             <h2 className="font-bold">Order Details</h2>
                             <div className="flex flex-col gap-5">
-                                <div className="flex items-center justify-between">
-                                    <p className="font-semibold">Status Pembayaran</p>
-                                    <p className="rounded-full w-fit p-[6px_16px] bg-[#FF852D] font-bold text-sm leading-[21px] text-[#F7F7FD]">
-                                        PENDING
-                                    </p>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <p className="font-semibold">Status Pembayaran</p>
-                                    <p className="rounded-full w-fit p-[6px_16px] bg-[#0D903A] font-bold text-sm leading-[21px] text-[#F7F7FD]">
-                                        SUCCESS
-                                    </p>
-                                </div>
+                                {bookingDetails.is_paid ? (
+                                    <div className="flex items-center justify-between">
+                                        <p className="font-semibold">Status Pembayaran</p>
+                                        <p className="rounded-full w-fit p-[6px_16px] bg-[#0D903A] font-bold text-sm leading-[21px] text-[#F7F7FD]">
+                                            SUCCESS
+                                        </p>
+                                    </div>) : (
+                                    <div className="flex items-center justify-between">
+                                        <p className="font-semibold">Status Pembayaran</p>
+                                        <p className="rounded-full w-fit p-[6px_16px] bg-[#FF852D] font-bold text-sm leading-[21px] text-[#F7F7FD]">
+                                            PENDING
+                                        </p>
+                                    </div>
+                                )}
                                 <div className="flex items-center justify-between">
                                     <p className="font-semibold">Booking TRX ID</p>
-                                    <p className="font-bold">FO1239812938</p>
+                                    <p className="font-bold">{bookingDetails.booking_trx_id}</p>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <p className="font-semibold">Duration</p>
-                                    <p className="font-bold">20 Days Working</p>
+                                    <p className="font-bold">{bookingDetails.duration} Days Working</p>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <p className="font-semibold">Total Amount</p>
                                     <p className="font-bold text-[22px] leading-[33px] text-[#0D903A]">
-                                        Rp 249.660
+                                        Rp {bookingDetails.total_amount.toLocaleString('id')}
                                     </p>
                                 </div>
                             </div>
@@ -306,6 +309,12 @@ export default function CheckBooking() {
                     </div>
                 )}
             </section>
+            {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
+                     role="alert">
+                    <span className="block sm:inline">{error}</span>
+                </div>
+            )}
         </>
 
     );

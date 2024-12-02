@@ -1,9 +1,9 @@
 import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {City} from "../types/type.ts";
-import axios from "axios";
 import OfficeCard from "../components/OfficeCard.tsx";
 import {Navbar} from "../components/Navbar.tsx";
+import apiClient from "../services/apiService.ts";
 
 export default function CityDetails() {
     const baseURL = "http://127.0.0.1:8000/storage/";
@@ -12,12 +12,8 @@ export default function CityDetails() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null);
     useEffect(() => {
-        axios
-            .get(`http://127.0.0.1:8000/api/city/${slug}`, {
-                headers: {
-                    "X-API-KEY": "aslaksjlakshaksbnjaijwsa",
-                },
-            })
+        apiClient
+            .get(`/city/${slug}`)
             .then((response) => {
                 setCity(response.data.data);
                 setLoading(false);
